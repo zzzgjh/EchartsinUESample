@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态数据显示</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="main" style="width: 450px; height: 230px; "></div>
+    <script type="text/javascript">
+        "object" != typeof ue || "object" != typeof ue.interface ? ("object" != typeof ue && (ue = {}),
+            ue.interface = {}, ue.interface.broadcast = function (e, t) {
+                if ("string" == typeof e) {
+                    var o = [e, ""]; void 0 !== t && (o[1] = t); var n = encodeURIComponent(JSON.stringify(o));
+                    "object" == typeof history && "function" == typeof history.pushState ? (history.pushState(
+                        {}, "", "#" + n), history.pushState({}, "", "#" + encodeURIComponent("[]"))) :
+                        (document.location.hash = n, document.location.hash = encodeURIComponent("[]"))
+                }
+            }) :
+            function (e) {
+                ue.interface = {}, ue.interface.broadcast = function (t, o) {
+                    "string" == typeof t && (void 0 !== o ? e.broadcast(t, JSON.stringify(o)) :
+                        e.broadcast(t, ""))
+                }
+            }(ue.interface), ue5 = ue.interface.broadcast;
+        //WEB UI InitialEvent https://github.com/tracerinteractive/UnrealEngine/releases
+        var myChart = echarts.init(document.getElementById('main'));
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                right: '5%',
+                data: ['发电量'],
+                textStyle: {
+                    color: '#FFFFFF', // 设置图例文字颜色为白色
+                    fontSize: 14 // 设置字体大小为14
+                }
+            },
+
+            grid: {
+                left: '1%',
+                right: '7%',
+                bottom: '1%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: [],
+                    axisLabel: {
+                        color: '#FFFFFF', // 正确设置X轴标签颜色为白色
+                        fontSize: 14 // 设置字体大小为14
+                    }
+                }
+            ],
+            yAxis: [{
+                name: '(万kwh)', type: 'value', nameTextStyle: {
+                    color: '#FFFFFF', // 设置名称的颜色为白色
+                    fontSize: 14 // 设置字体大小为14
+                },
+                axisLabel: {
+                    color: '#FFFFFF', // 正确设置X轴标签颜色为白色
+                    fontSize: 14 // 设置字体大小为14
+                },
+            }],
+            series: [
+                {
+                    name: '发电量',
+                    type: 'line',
+                    stack: 'Total',
+                    smooth: true,
+                    label: {
+                        show: false,
+                        position: 'top'
+                    },
+                    lineStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                            { offset: 0, color: 'rgb(0, 221, 255)' }, // 0% 处的颜色
+                            { offset: 1, color: 'rgb(77, 119, 255)' }  // 100% 处的颜色
+                        ])
+                    },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgb(0, 221, 255)' }, // 0% 处的颜色
+                            { offset: 1, color: 'rgb(77, 119, 255)' }  // 100% 处的颜色
+                        ])
+                    },
+                    itemStyle: {
+                        color: 'rgb(0, 221, 255)', // 点的颜色
+                        borderColor: 'rgb(0, 221, 255)', // 点的边框颜色
+                        borderWidth: 2 // 点的边框宽度
+                    },
+                    emphasis: {
+                        focus: 'series'
+                    },
+                    data: []
+                }
+            ]
+        };
+
+
+        myChart.setOption(option);
+        ue.interface.ue2js1 = function (ueData) {
+            ue5("js2ue", "knjw1");
+            var jsonobj = JSON.parse(ueData);
+            myChart.setOption(jsonobj);
+            ue5("js2ue", "knjw");
+        };
+        ue.interface.ue2js2 = function (ueData) {
+            try {
+                // 第一个反馈给 UE，表示函数开始执行
+                ue5("js2ue", "knjw1");
+
+                // 将 ueData 解析为 JSON 对象
+                var jsonobj = JSON.parse(ueData);
+
+                // 假设 jsonobj 中包含 xAxis 的新 data
+                if (jsonobj.xAxis && jsonobj.xAxis.data) {
+                    myChart.setOption({
+                        xAxis: {
+                            data: jsonobj.xAxis.data  // 更新 xAxis 的 data
+                        }
+                    });
+                }
+
+                // 更新图表后，再次发送反馈给 UE，表示操作完成
+                ue5("js2ue", "knjw");
+
+            } catch (error) {
+                console.error("Error parsing ueData or setting option:", error);
+                ue5("js2ue", "error encountered");
+            }
+        };
+
+        // Receive Message From UE
+
+
+    </script>
+</body>
+
+</html>
